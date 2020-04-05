@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1073394580903",
+    "firebase_url": "https://doorlockk-f09a1.firebaseio.com",
+    "project_id": "doorlockk-f09a1",
+    "storage_bucket": "doorlockk-f09a1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073394580903:android:cbe5bfa0514dddf5cb8a82",
+        "android_client_info": {
+          "package_name": "com.example.philipgo.servodoorlock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1073394580903-ml959ovo9g4cj97d6me9jm4avjqrlt7v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMaJ8aIKWqEtRaWzaz1LMHUnRxoDpiqYo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1073394580903-ml959ovo9g4cj97d6me9jm4avjqrlt7v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
