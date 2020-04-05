@@ -11,6 +11,15 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.philipgo.servodoorlock.MainActivity">
 
+    <Button
+        android:id="@+id/logout_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/red_light"
+        android:layout_alignParentRight="true"
+        android:layout_margin="1dp"
+        android:text="logout" />
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Lock State: LOCKED"
-        android:layout_marginBottom="179dp"
+        android:layout_marginBottom="95pt"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/lock_state_text" />
@@ -37,7 +46,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="11dp"
+        android:layout_marginBottom="35pt"
+        android:padding="30px"
+        android:background="@color/colorPrimary"
         android:text="Connect to lock" />
 
     <Button
@@ -47,7 +58,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/bluetooth_connect_btn"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="17dp"
+        android:padding="30px"
+        android:background="@color/colorPrimary"
+        android:layout_marginBottom="6pt"
         android:text="Lock/Unlock Door" />
 
 
