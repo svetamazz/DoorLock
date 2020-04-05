@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnSignIn;
     FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    public static String userEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +39,10 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
                 if( mFirebaseUser != null ){
+                    userEmail = mFirebaseUser.getEmail();
                     Intent intentMain = new Intent(MainActivity.this ,
                             HomeActivity.class);
                     MainActivity.this.startActivity(intentMain);
-                    //setContentView(R.layout.activity_main);
                 }
             }
         };
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = emailId.getText().toString();
+                final String email = emailId.getText().toString();
                 if(email.isEmpty()){
                     emailId.setError("Please enter email");
                     emailId.requestFocus();
@@ -59,15 +60,13 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(!task.isSuccessful()){
-                                Toast.makeText(MainActivity.this,"Login Error, Please Login Again",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this,"Error! Login again, please.",Toast.LENGTH_SHORT).show();
                             }
                             else{
+                                userEmail = email;
                                 Intent intentMain = new Intent(MainActivity.this ,
                                         HomeActivity.class);
                                 MainActivity.this.startActivity(intentMain);
-                                //setContentView(R.layout.activity_main);
-                                //Intent intToHome = new Intent(MainActivity.this,HomeActivity.class);
-                                //startActivity(intToHome);
                             }
                         }
                     });

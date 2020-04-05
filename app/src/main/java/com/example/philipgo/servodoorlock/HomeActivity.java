@@ -1,7 +1,9 @@
 package com.example.philipgo.servodoorlock;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -15,9 +17,16 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import android.os.Handler;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.auth.FirebaseAuth;
 
 @SuppressLint("Registered")
 public class HomeActivity extends AppCompatActivity {
@@ -25,11 +34,15 @@ public class HomeActivity extends AppCompatActivity {
     private final String DEVICE_ADDRESS = "98:D3:31:F9:6F:D1"; //MAC Address of Bluetooth Module
     private final UUID PORT_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     private BluetoothDevice device;
     private BluetoothSocket socket;
 
     private OutputStream outputStream;
     private InputStream inputStream;
+
+    String lockState;
 
     Thread thread;
     byte buffer[];
@@ -38,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
     boolean connected = false;
     String command;
 
-    Button lock_state_btn, bluetooth_connect_btn;
+    Button lock_state_btn, bluetooth_connect_btn, logout_btn;
     TextView lock_state_text;
     ImageView lock_state_img;
 
@@ -49,10 +62,19 @@ public class HomeActivity extends AppCompatActivity {
 
         lock_state_btn = (Button) findViewById(R.id.lock_state_btn);
         bluetooth_connect_btn = (Button) findViewById(R.id.bluetooth_connect_btn);
+        logout_btn =  (Button) findViewById(R.id.logout_btn);
 
         lock_state_text = (TextView) findViewById(R.id.lock_state_text);
-
         lock_state_img = (ImageView) findViewById(R.id.lock_state_img);
+
+        logout_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                FirebaseAuth.getInstance().signOut();
+                Intent intToMain = new Intent(HomeActivity.this, MainActivity.class);
+                startActivity(intToMain);
+            }
+        });
 
         bluetooth_connect_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,6 +104,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+
         lock_state_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
@@ -93,10 +116,9 @@ public class HomeActivity extends AppCompatActivity {
                 else
                 {
                     command = "1";
-
                     try
                     {
-                        outputStream.write(command.getBytes()); // Sends the number 1 to the Arduino. For a detailed look at how the resulting command is handled, please see the Arduino Source Code
+                        outputStream.write(command.getBytes());
                     }
                     catch (IOException e)
                     {
@@ -105,6 +127,20 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    void writeActionToDB()
+    {
+        Map<String, Object> note = new HashMap<>();
+        note.put("UserEmail", MainActivity.userEmail);
+        note.put("Action", lockState);
+        note.put("Time", new Date());
+
+        Date dNow = new Date();
+        SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs", Locale.ENGLISH);
+        String uniqueId = ft.format(dNow);
+
+        db.collection(MainActivity.userEmail).document(uniqueId).set(note);
     }
 
     void beginListenForData() // begins listening for any incoming data from the Arduino
@@ -131,19 +167,28 @@ public class HomeActivity extends AppCompatActivity {
 
                             handler.post(new Runnable()
                             {
+                                @RequiresApi(api = Build.VERSION_CODES.O)
                                 public void run()
                                 {
                                     if(string.equals("0"))
                                     {
+                                        lockState="locked";
                                         lock_state_text.setText("Lock State: LOCKED"); // Changes the lock state text
+                                        lock_state_btn.setText("Unlock door");
                                         lock_state_btn.setBackgroundColor(getResources().getColor(R.color.red));
                                         lock_state_img.setImageResource(R.drawable.locked_icon); //Changes the lock state icon
                                     }
                                     else if(string.equals("1"))
                                     {
+                                        lockState="unlocked";
+                                        lock_state_btn.setText("Lock door");
                                         lock_state_text.setText("Lock State: UNLOCKED");
                                         lock_state_btn.setBackgroundColor(getResources().getColor(R.color.green));
                                         lock_state_img.setImageResource(R.drawable.unlocked_icon);
+                                    }
+                                    if(command.equals("1"))
+                                    {
+                                        writeActionToDB();
                                     }
                                 }
                             });
