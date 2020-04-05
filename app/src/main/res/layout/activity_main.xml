@@ -38,7 +38,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="11dp"
-        android:text="Connect to door lock" />
+        android:text="Connect to lock" />
 
     <Button
         android:id="@+id/lock_state_btn"
